@@ -67,56 +67,67 @@
         const carrito = {};
 
         function addToCart() {
-            let selectedItem = document.carro.productos.value;
-            let cantidad =parseInt(document.carro.cantidad.value);
+            let seleccionado = document.carro.productos.value; // me lo está tratando como string y no como número. 
+            // creo una variable seleccionado, que está en document y productos, value. Hago lo mismo con cantidad. 
+            let cantidad = parseInt(document.carro.cantidad.value); //parsea : recorrer un string y convertirlo en cosas, en este caso en números. 
+            let estado = productos[seleccionado] // se crea una variable nueva a la que se le asigna un valor, el del seleccionado. 
 
-            let producto = productos[selectedItem];
+            if (estado.stock >= cantidad) {
 
-            if (producto.stock < cantidad) {
-                alert(`No hay suficiente stock. Solo quedan ${producto.stock} unidades.`)
-            } else {
-                producto.stock -= cantidad;
-                let total = 0;
-                total = parseInt(document.calc.total.value);
-                total += cantidad * producto.precio;
-                document.calc.total.value = total;
-                let prev = carrito[selectedItem] || {};
-                carrito[selectedItem] = { stock: (prev?.stock || 0) + cantidad, precio: (prev?.precio || 0) + cantidad * producto.precio };
-                rellenaVitrina();
+                // para que se le añada al carrito. debemos reducir el stock
+                estado.stock = estado.stock - cantidad;
+                let total = parseInt(document.calc.total.value);
+                total += cantidad * estado.precio; //precio no es una variable que exista, pero sí recono estado.precio poeq está justo antes definida. sabe lo que es estado, y este tiene una variable que es precio. 
+                document.calc.total.value = total;// tenemos que poner parseint para convertir esto document.calc.total.value a número. (ahora mismo es un string) += (guarda y suma con lo siguiente) no funciona. 
+                if (carrito[seleccionado]) { //si existe la variable 
+                    let previous = carrito[seleccionado];
+                    carrito[seleccionado] = { precio: previous.precio + cantidad * estado.precio, stock: previo.stock + cantidad };
+                }
+                else {
+                    carrito[seleccionado] = { precio: cantidad * estado.precio, stock: cantidad };
+                }
+
+
+                rellenaVitrina(); //hemos invocado las funciones porq sino no se afecta el jS
                 carritoActual();
+            } else {
+                alert(`solo quedan ${estado.stock} ${seleccionado}`)
             }
         }
 
         function paga() {
-            let total = document.calc.total.value;
-            let pagado = document.calc.pagado.value;
-
-            if (pagado > total) {
+            let total = parseInt(document.calc.total.value); //sin parseint me lo compara por orden alfabético. No me lo reconoce como un número. Por eso ponemos parseint. Parseint es una función. 
+            let pagado = parseInt(document.calc.total.value);
+            if (pagado < total) {
+                alert("falta dinero")
+            }
+            else {
                 document.calc.cambio.value = pagado - total;
-                carrito = {}
-            } else {
-                alert("Falta Dinero...");
+                carrito = {};
+                carritoActual(); //para que se bea el carrito vacío. 
+
             }
         }
 
         function rellenaVitrina() {
             let htmlTable = "<tr><th>Producto</th><th>Stock</th><th>Precio</th></tr>";
             for (let p of Object.keys(productos)) {
-                htmlTable += `<tr><td>${p}</td><td>${productos[p].stock}</td><td>${productos[p].precio}</td></tr>`;
+                htmlTable += `< tr ><td>${p}</td><td>${productos[p].stock}</td><td>${productos[p].precio}</td></tr > `;
             }
             let vitrina = document.getElementById("vitrina");
             vitrina.innerHTML = htmlTable;
         }
 
         function carritoActual() {
-            if (Object.keys(carrito).length > 0) {
-                let htmlTable = "<tr><th>Producto</th><th>Cantidad</th><th>Precio</th></tr>";
+            let  htmlTable = "";
+            if (Object.keys(carrito).length > 0) { //condición, el número de claves (campos) es más que 0.
+                htmlTable = "<tr><th>Producto</th><th>Cantidad</th><th>Precio</th></tr>";
                 for (let p of Object.keys(carrito)) {
-                    htmlTable += `<tr><td>${p}</td><td>${carrito[p].stock}</td><td>${carrito[p].precio}</td></tr>`;
+                    htmlTable += `< tr ><td>${p}</td><td>${carrito[p].stock}</td><td>${carrito[p].precio}</td></tr >`;
                 }
-                let vistaCarrito = document.getElementById("carrito");
-                vistaCarrito.innerHTML = htmlTable;
             }
+            let vistaCarrito = document.getElementById("carrito");
+            vistaCarrito.innerHTML = htmlTable;
         }
 
         rellenaVitrina();
