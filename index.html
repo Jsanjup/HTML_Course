@@ -63,39 +63,48 @@
             "lechugas": { precio: 4, stock: 5 },
             "naranjas": { precio: 5, stock: 15 },
         };
-
-        const carrito = {};
+        let carrito = {};// si carrito es una constante no puede volver a cero para la siguiente compra, por eso ponermos let
 
         function addToCart() {
-            let selectedItem = document.carro.productos.value;
-            let cantidad =parseInt(document.carro.cantidad.value);
-
-            let producto = productos[selectedItem];
-
-            if (producto.stock < cantidad) {
-                alert(`No hay suficiente stock. Solo quedan ${producto.stock} unidades.`)
-            } else {
-                producto.stock -= cantidad;
-                let total = 0;
-                total = parseInt(document.calc.total.value);
-                total += cantidad * producto.precio;
+            let seleccionado = document.carro.producto.value;
+            let cantidad = parseInt(document.carro.cantidad.value);//parseInt convierte los strings en números-, parsear es recorrer un string y ocnvertirlo en algo
+            let estado = productos[seleccionado];
+            // variable "estado" que acababamos de establecer es unir el producto seleccionado al estado del producto, es decir al precio y al stock
+            //le ponemos un stop para que verifique el stock
+            if (estado.stock >= cantidad) {
+                estado.stock = estado.stock - cantidad;
+                let total = parseInt(document.calc.total.value);
+                total += cantidad * estado.precio; // precio solo no funciona, pq es una variable que no existe. En cambio! la variable estado existe y tiene un campo que es el precio 
+                // si pongo += es como concatenar strings; si a un string le sumo número detrás lo único que hace es concatenárselos, parseInt( ) para que ya no sea un string -> transforma un string en número
                 document.calc.total.value = total;
-                let prev = carrito[selectedItem] || {};
-                carrito[selectedItem] = { stock: (prev?.stock || 0) + cantidad, precio: (prev?.precio || 0) + cantidad * producto.precio };
+                //modificamos el carrito antes de que lo pinte porque si no no veríamos los cambios realizados
+                carrito[seleccionado] = { precio: cantidad * estado.precio, stock: cantidad };
+                // puedo poner para precio parseInt(document.calc.total.value) o cantidad*estado.precio <- esta funciona mejor, porque la otra suma a lo ya sumado
+                //Hemos recopiado las funcionas rellenaVitrina y carritoActual para evocarlas porque sino no se modifican
+                if (carritpo[seleccionado]) { // esto es : si existe la variable carrito seleccionado que haga tal.. (lo que está entre {})
+                    let previo = carrito[seleccionado];
+                    carrito[seleccionado]= {precio: previo.precio+cantidad*estado.precio, stock:previo.stock+cantidad};
+                } else {
+                    carrito[seleccionado]={precio: cantidad*estado.precio, stock: cantidad};
+                }
                 rellenaVitrina();
                 carritoActual();
+            }
+            else {
+                alert(`Solo quedan ${estado.stock} ${seleccionado}`)
+
             }
         }
 
         function paga() {
-            let total = document.calc.total.value;
-            let pagado = document.calc.pagado.value;
-
-            if (pagado > total) {
-                document.calc.cambio.value = pagado - total;
-                carrito = {}
+            let total = parseInt(document.calc.total.value); // hay que añadir parseInt porque si no, lo que hace es comparar strings alfabéticamente
+            let pagado = parseInt(document.calc.pagado.value);
+            if (pagado < total) {
+                alert(`falta dinero`)
             } else {
-                alert("Falta Dinero...");
+                document.calc.cambio.value = pagado - total;
+                carrito = {}; // para que el carrito se ponga a cero para la próxima compra
+                carritoActual(); // pongo carrito actual para que se vea el carrito actual vaciado
             }
         }
 
