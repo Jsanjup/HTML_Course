@@ -64,38 +64,42 @@
             "naranjas": { precio: 5, stock: 15 },
         };
 
-        const carrito = {};
+        let carrito = {};
 
         function addToCart() {
-            let selectedItem = document.carro.productos.value;
-            let cantidad =parseInt(document.carro.cantidad.value);
+            let seleccionado = document.carro.productos.value;
+            let cantidad = parseInt(document.carro.cantidad.value);
 
-            let producto = productos[selectedItem];
+            let estado = productos[seleccionado];
+            if (estado.stock >= cantidad) {
+                estado.stock = estado.stock - cantidad;
+                document.calc.total.value = parseInt(document.calc.total.value) + cantidad * estado.precio;
 
-            if (producto.stock < cantidad) {
-                alert(`No hay suficiente stock. Solo quedan ${producto.stock} unidades.`)
-            } else {
-                producto.stock -= cantidad;
-                let total = 0;
-                total = parseInt(document.calc.total.value);
-                total += cantidad * producto.precio;
-                document.calc.total.value = total;
-                let prev = carrito[selectedItem] || {};
-                carrito[selectedItem] = { stock: (prev?.stock || 0) + cantidad, precio: (prev?.precio || 0) + cantidad * producto.precio };
+                if (carrito[seleccionado]){
+                    let previo = carrito[seleccionado];
+                    carrito[seleccionado] = { precio: previo.precio + cantidad * estado.precio , stock: previo.stock + cantidad};
+                } else {
+                    carrito[seleccionado] = { precio: cantidad * estado.precio, stock: cantidad };
+                }
                 rellenaVitrina();
                 carritoActual();
+            } else {
+                alert(`Solo quedan ${estado.stock} ${seleccionado}`)
             }
+
         }
 
         function paga() {
-            let total = document.calc.total.value;
-            let pagado = document.calc.pagado.value;
+            let total = parseInt(document.calc.total.value);
+            let pagado = parseInt(document.calc.pagado.value);
 
-            if (pagado > total) {
-                document.calc.cambio.value = pagado - total;
-                carrito = {}
+            if (pagado < total) {
+                alert("Falta dinero. Moroso de mierda.")
             } else {
-                alert("Falta Dinero...");
+                document.calc.cambio.value = pagado - total;
+                carrito = {};
+                carritoActual();
+                console.log(carrito)
             }
         }
 
@@ -109,14 +113,15 @@
         }
 
         function carritoActual() {
+            let htmlTable = "";
             if (Object.keys(carrito).length > 0) {
-                let htmlTable = "<tr><th>Producto</th><th>Cantidad</th><th>Precio</th></tr>";
+                htmlTable += "<tr><th>Producto</th><th>Cantidad</th><th>Coste</th></tr>";
                 for (let p of Object.keys(carrito)) {
                     htmlTable += `<tr><td>${p}</td><td>${carrito[p].stock}</td><td>${carrito[p].precio}</td></tr>`;
                 }
-                let vistaCarrito = document.getElementById("carrito");
-                vistaCarrito.innerHTML = htmlTable;
             }
+            let vistaCarrito = document.getElementById("carrito");
+            vistaCarrito.innerHTML = htmlTable;
         }
 
         rellenaVitrina();
