@@ -5,20 +5,20 @@
 </head>
 
 <body>
-    <h1>CAJA REGISTRADORA</h1>
+    <h1>CAJA REGISTRADORA</h1> //h1 es el título más grande que hay. La etiquera es un título 1, mientras que id especifica el título.  
 
 
-    <h2>Productos</h2>
-    <table id="vitrina"></table>
-    <br>
-    <p>
+    <h2>Productos</h2> //h2 // segundo título más grande que hay. 
+    <table id="vitrina"></table> //id: nombra el elemento. Es más específico que la etiqueta. Es el DNI, es único  
+    <br> //para cerrar elementos 
+    <p> //parrafo 
         ------------------------------------
     </p>
     <br>
-    <h2>Tu Carro</h2>
-    <table id="carrito"></table>
-    <form name="carro">
-        <h4>Producto</h4>
+    <h2>Tu Carro</h2> // de nuevo un título de orden 2, segundo mas grande. 
+    <table id="carrito"></table> //la tabla con su id= "carrito". 
+    <form name="carro"> 
+        <h4>Producto</h4> //títulos de la tabla 
         <select name="productos" id="productos">
             <option value="zanahorias">Zanahorias</option>
             <option value="patatas">Patatas</option>
@@ -26,7 +26,7 @@
             <option value="lechugas">Lechugas</option>
             <option value="naranjas">Naranjas</option>
         </select>
-        <h4>Cantidad</h4>
+        <h4>Cantidad</h4> //título de la tabla 
         <input type="number" name="cantidad" value="0" size="2">
         <input type="button" name="" value="Lo quiero" onclick="addToCart()">
 
@@ -55,13 +55,13 @@
 
     </form>
 
-    <script type="text/javascript">
+    <script type="text/javascript"> //un script es un elemento de HTML
         const productos = {
-            "zanahorias": { precio: 2, stock: 20, descuento: 1 },
-            "patatas": { precio: 1, stock: 120, descuento: 1 },
-            "manzanas": { precio: 3, stock: 40, descuento: 0.90 },
-            "lechugas": { precio: 4, stock: 5, descuento: 1 },
-            "naranjas": { precio: 5, stock: 15, descuento:0.90 },
+            "zanahorias": { precio: 2, stock: 20, descuento: 0  },
+            "patatas": { precio: 1, stock: 120, descuento:0 },
+            "manzanas": { precio: 3, stock: 40, descuento:10 },
+            "lechugas": { precio: 4, stock: 5, descuento: 0 },
+            "naranjas": { precio: 5, stock: 15, descuento:10 },
         };
 
         const carrito = {};
@@ -75,7 +75,7 @@
             if (estado.stock >= cantidad) {
 
                 // para que se le añada al carrito. debemos reducir el stock
-                estado.stock = estado.stock - cantidad;
+                estado.stock = estado.stock - cantidad; // stock (lo que hay en el carro) menos lo que te llevas (cantidad) es l
                 let total = parseInt(document.calc.total.value);
                 total += cantidad * estado.precio; //precio no es una variable que exista, pero sí recono estado.precio poeq está justo antes definida. sabe lo que es estado, y este tiene una variable que es precio. 
                 document.calc.total.value = total;// tenemos que poner parseint para convertir esto document.calc.total.value a número. (ahora mismo es un string) += (guarda y suma con lo siguiente) no funciona. 
@@ -96,7 +96,7 @@
         }
 
         function paga() {
-            let total = parseInt(document.calc.total.value); //sin parseint me lo compara por orden alfabético. No me lo reconoce como un número. Por eso ponemos parseint. Parseint es una función. 
+            let total = parseInt(document.calc.total.value); //sin parseint me lo compara por orden alfabético. No me lo reconoce como un número. Por eso ponemos parseint. Parseint es una función. las funciones van entre (). 
             let pagado = parseInt(document.calc.total.value);
             if (pagado < total) {
                 alert("falta dinero")
@@ -128,16 +128,10 @@
             }
             let vistaCarrito = document.getElementById("carrito");
             vistaCarrito.innerHTML = htmlTable;
+
         }
-        function descuento (precio, Descuento, cantidad){
-            let precio= document.producto.precio 
-            let Descuento= document.productos.descuento
-            let precio_con_descuento= document.productos.precio*cantidad*document.productos.descuento;
-            return precio_con_descuento;  
+      
         }
-        function descuento (document.productos.precio,cantidad, document.productos.descuento)
-           return document.productos.precio*cantidad*document.productos.descuento;
-        
 
         rellenaVitrina();
         carritoActual();
