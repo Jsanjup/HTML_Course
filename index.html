@@ -1,12 +1,19 @@
 <html>
 
 <head>
-    <title>Caja registradora</title>
+    <title>Caja registradora</title> 
+    <link href='css/styles.css' rel="stylesheet"/>;
+    <style type="text/css">
+     p {
+         color: rgb(17, 7, 153); 
+         font-family: Verdana;
+     }
+    </style>
+
 </head>
 
 <body>
     <h1>CAJA REGISTRADORA</h1>
-
 
     <h2>Productos</h2>
     <table id="vitrina"></table>
@@ -59,9 +66,9 @@
         const productos = {
             "zanahorias": { precio: 2, stock: 20 },
             "patatas": { precio: 1, stock: 120 },
-            "manzanas": { precio: 3, stock: 40 },
+            "manzanas": { precio: 3, stock: 40, descuento:20 },
             "lechugas": { precio: 4, stock: 5 },
-            "naranjas": { precio: 5, stock: 15 },
+            "naranjas": { precio: 5, stock: 15, descuento: 15},
         };
         let carrito = {};// si carrito es una constante no puede volver a cero para la siguiente compra, por eso ponermos let
 
@@ -74,18 +81,20 @@
             if (estado.stock >= cantidad) {
                 estado.stock = estado.stock - cantidad;
                 let total = parseInt(document.calc.total.value);
-                total += cantidad * estado.precio; // precio solo no funciona, pq es una variable que no existe. En cambio! la variable estado existe y tiene un campo que es el precio 
+                let preciodescuento = descuento(estado.precio, cantidad, estado.descuento); // con esto le paso la cantidad original, el precio original y el del descuento
+                total += preciodescuento ; 
+                // precio solo no funciona, pq es una variable que no existe. En cambio! la variable estado existe y tiene un campo que es el precio 
                 // si pongo += es como concatenar strings; si a un string le sumo número detrás lo único que hace es concatenárselos, parseInt( ) para que ya no sea un string -> transforma un string en número
                 document.calc.total.value = total;
                 //modificamos el carrito antes de que lo pinte porque si no no veríamos los cambios realizados
-                carrito[seleccionado] = { precio: cantidad * estado.precio, stock: cantidad };
-                // puedo poner para precio parseInt(document.calc.total.value) o cantidad*estado.precio <- esta funciona mejor, porque la otra suma a lo ya sumado
-                //Hemos recopiado las funcionas rellenaVitrina y carritoActual para evocarlas porque sino no se modifican
-                if (carritpo[seleccionado]) { // esto es : si existe la variable carrito seleccionado que haga tal.. (lo que está entre {})
+                if (carrito[seleccionado]) { // esto es : si existe la variable carrito seleccionado que haga tal.. (lo que está entre {})
                     let previo = carrito[seleccionado];
-                    carrito[seleccionado]= {precio: previo.precio+cantidad*estado.precio, stock:previo.stock+cantidad};
+                    carrito[seleccionado] = { precio: previo.precio + preciodescuento, stock: previo.stock + cantidad };
                 } else {
-                    carrito[seleccionado]={precio: cantidad*estado.precio, stock: cantidad};
+                    carrito[seleccionado] = { precio: preciodescuento, stock: cantidad };
+                    // puedo poner para precio parseInt(document.calc.total.value) o cantidad*estado.precio <- esta funciona mejor, porque la otra suma a lo ya sumado
+                    //Hemos recopiado las funcionas rellenaVitrina y carritoActual para evocarlas porque sino no se modifican
+                
                 }
                 rellenaVitrina();
                 carritoActual();
@@ -118,14 +127,24 @@
         }
 
         function carritoActual() {
+            let htmlTable = "";
             if (Object.keys(carrito).length > 0) {
-                let htmlTable = "<tr><th>Producto</th><th>Cantidad</th><th>Precio</th></tr>";
+                htmlTable = "<tr><th>Producto</th><th>Cantidad</th><th>Precio</th></tr>";
                 for (let p of Object.keys(carrito)) {
                     htmlTable += `<tr><td>${p}</td><td>${carrito[p].stock}</td><td>${carrito[p].precio}</td></tr>`;
                 }
-                let vistaCarrito = document.getElementById("carrito");
-                vistaCarrito.innerHTML = htmlTable;
             }
+            let vistaCarrito = document.getElementById("carrito");
+            vistaCarrito.innerHTML = htmlTable;
+        }
+        function descuento(precio, cantidad, descuento) {
+            let preciofinal
+            if (descuento){
+                preciofinal = precio*cantidad*(1-(descuento/100))
+            } else {
+                preciofinal = precio*cantidad
+            }
+            return preciofinal;
         }
 
         rellenaVitrina();

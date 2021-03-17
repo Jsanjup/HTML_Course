@@ -1,0 +1,13 @@
+body {
+  background-color: rgb(112, 143, 97);
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+h1 {
+  color: rgb(53, 6, 6);
+  text-align: center;
+}
+
+p {
+  font-size: 20px;
+}
